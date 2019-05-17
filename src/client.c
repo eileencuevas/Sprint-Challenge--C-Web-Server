@@ -133,5 +133,25 @@ int main(int argc, char *argv[])
   ///////////////////
   // IMPLEMENT ME! //
   ///////////////////
+  urlinfo_t *urlinfo = parse_url(argv[1]);
+  int socket = get_socket(urlinfo->hostname, urlinfo->port);
+  if (socket < 0)
+  {
+    fprintf(stderr, "webserver: error getting socket\n");
+    exit(1);
+  }
+
+  send_request(socket, urlinfo->hostname, urlinfo->port, urlinfo->path);
+  // char response = send(socket, buf, BUFSIZE - 1, 0);
+
+  while ((numbytes = recv(socket, buf, BUFSIZE - 1, 0)) > 0)
+  {
+    fprintf(stdout, "%s\n", buf);
+  }
+
+  free(urlinfo->hostname);
+  free(urlinfo);
+  close(socket);
+
   return 0;
 }
